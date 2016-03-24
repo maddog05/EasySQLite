@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        tools:ignore="UselessParent">
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/txtInsertPlayerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/txtInsertPlayerTeam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Team"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/txtInsertPlayerValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Value"/>
+        </android.support.design.widget.TextInputLayout>
+        <Button
+            android:id="@+id/btnInserPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="INSERT"/>
+    </LinearLayout>
+</RelativeLayout>
