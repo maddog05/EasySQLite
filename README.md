@@ -2,7 +2,7 @@
 Android library to simplify the use of SQLite
 
 ## How to include
-Download the library from **Download** folder and add to your project
+Download the library from **Download** folder and add to your project.
 Current version is **easysqlite-0.1.1.aar**
 
 ## Usage
