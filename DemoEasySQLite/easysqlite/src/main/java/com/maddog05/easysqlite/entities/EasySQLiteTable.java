@@ -52,17 +52,21 @@ public class EasySQLiteTable {
         return this;
     }
 
-    public String buildCreationScript()
+    public EasySQLiteCreationScript buildCreationScript()
     {
+        EasySQLiteCreationScript script = new EasySQLiteCreationScript();
+
         if(tableName == null || tableName.isEmpty())
         {
             Log.e(LOG_TAG, EasySQLiteMessage.TABLE_NAME_EMPTY_OR_NULL);
-            return EasySQLiteMessage.TABLE_NAME_EMPTY_OR_NULL;
+            script.setMessage(EasySQLiteMessage.TABLE_NAME_EMPTY_OR_NULL);
+            return script;
         }
         if(columns == null || columns.size() == 0)
         {
             Log.e(LOG_TAG, EasySQLiteMessage.TABLE_COLUMNS_EMPTY_OR_NULL);
-            return EasySQLiteMessage.TABLE_COLUMNS_EMPTY_OR_NULL;
+            script.setMessage(EasySQLiteMessage.TABLE_COLUMNS_EMPTY_OR_NULL);
+            return script;
         }
         //OPEN QUERY
         String query = "CREATE TABLE " + tableName + "(";
@@ -92,7 +96,10 @@ public class EasySQLiteTable {
             //NEXT COLUMN OR CLOSE QUERY
             query += (i < columnsCount-1) ? "," : ")";
         }
-        return query;
+
+        script.setMessage(EasySQLiteMessage.TABLE_SCRIPT_GENERATED);
+        script.setScript(query);
+        return script;
     }
 
     public List<String> getColumnNames()

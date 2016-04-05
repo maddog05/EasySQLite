@@ -5,8 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.maddog05.easysqlite.entities.EasySQLiteCreationScript;
 import com.maddog05.easysqlite.entities.EasySQLiteTable;
+import com.maddog05.easysqlite.messages.EasySQLiteMessage;
 
 import java.util.List;
 
@@ -14,6 +17,8 @@ import java.util.List;
  * Created by maddog05 on 17/03/16.
  */
 public class EasySQLiteHandler extends SQLiteOpenHelper {
+
+    private static final String LOG_TAG = "EasySQLiteHandler";
 
     private List<EasySQLiteTable> tables;
 
@@ -27,7 +32,11 @@ public class EasySQLiteHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         for(int i = 0; i < tables.size(); i++)
         {
-            db.execSQL(tables.get(i).buildCreationScript());
+            EasySQLiteCreationScript script = tables.get(i).buildCreationScript();
+            if(script.getMessage().equals(EasySQLiteMessage.TABLE_SCRIPT_GENERATED))
+                db.execSQL(script.getScript());
+            else
+                Log.e(LOG_TAG, script.getMessage());
         }
     }
 

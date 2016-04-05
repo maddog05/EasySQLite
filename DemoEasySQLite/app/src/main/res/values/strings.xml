@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">DemoEasySQLite</string>
+    <string name="app_name">EasySQLite</string>
+    <string name="info_message">Android library to simplify the use of SQLite. Developed by Andree Torres (maddog05 on GitHub)</string>
 </resources>

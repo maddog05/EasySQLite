@@ -1,7 +1,11 @@
 package com.maddog05.demoeasysqlite;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,11 +38,12 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(MainActivity.this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerPlayers.setLayoutManager(llm);
+        getPlayers(recyclerPlayers);
     }
 
     public void insertPlayer(final View v)
     {
-        final Dialog dialog = new Dialog(MainActivity.this);
+        final Dialog dialog = new Dialog(MainActivity.this, R.style.DialogTheme);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_insert_player);
         final EditText txtName = (EditText) dialog.findViewById(R.id.txtInsertPlayerName);
@@ -48,12 +53,30 @@ public class MainActivity extends AppCompatActivity {
         btnInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Player player = new Player();
-                player.setName(txtName.getText().toString());
-                player.setTeam(txtTeam.getText().toString());
-                player.setMoneyValue(Double.parseDouble(txtValue.getText().toString()));
-                playerManager.insertPlayer(player);
-                Snackbar.make(v,"Player inserted",Snackbar.LENGTH_SHORT).show();
+                String pName = txtName.getText().toString();
+                String pTeam = txtTeam.getText().toString();
+                String pValue = txtValue.getText().toString();
+                if (pName.isEmpty() || pName.length() == 0 &&
+                        pTeam.isEmpty() || pTeam.length() == 0 &&
+                        pValue.isEmpty() || pValue.length() == 0) {
+                    Toast.makeText(MainActivity.this, "Need data to save", Toast.LENGTH_SHORT).show();
+                } else {
+                    Player player = new Player();
+                    player.setName(pName);
+                    player.setTeam(pTeam);
+                    player.setMoneyValue(Double.parseDouble(pValue));
+                    playerManager.insertPlayer(player);
+                    Snackbar.make(v, "Player inserted", Snackbar.LENGTH_SHORT).show();
+                    dialog.dismiss();
+
+                    getPlayers(view);
+                }
+            }
+        });
+        Button btnDismiss = (Button) dialog.findViewById(R.id.btnDismissDialog);
+        btnDismiss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 dialog.dismiss();
             }
         });
@@ -71,8 +94,65 @@ public class MainActivity extends AppCompatActivity {
 
     public void deletePlayers(View v)
     {
-        playerManager.deletePlayers();
-        recyclerPlayers.setAdapter(new PlayerAdapter(MainActivity.this, null));
-        Snackbar.make(v,"Players deleted", Snackbar.LENGTH_SHORT).show();
+        AlertDialog.Builder dialogDelete = new AlertDialog.Builder(MainActivity.this, R.style.AlertTheme);
+        dialogDelete.setTitle(R.string.app_name);
+        dialogDelete.setMessage("Do you want to delete all players?");
+        dialogDelete.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialogDelete.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                playerManager.deletePlayers();
+                recyclerPlayers.setAdapter(new PlayerAdapter(MainActivity.this, null));
+                Snackbar.make(recyclerPlayers, "Players deleted", Snackbar.LENGTH_SHORT).show();
+            }
+        });
+        dialogDelete.show();
+    }
+
+    public void developerInfo(View v)
+    {
+        AlertDialog.Builder dialogInfo = new AlertDialog.Builder(MainActivity.this, R.style.AlertTheme);
+        dialogInfo.setTitle(R.string.app_name);
+        dialogInfo.setMessage(R.string.info_message);
+        dialogInfo.setPositiveButton("MY GITHUB", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                openGitHub();
+            }
+        });
+        dialogInfo.setNeutralButton("Project", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                openProject();
+            }
+        });
+        dialogInfo.setNegativeButton("CLOSE", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialogInfo.show();
+    }
+
+    private void openGitHub()
+    {
+        String url = "https://github.com/maddog05";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+
+    private void openProject()
+    {
+        String url = "https://github.com/maddog05/EasySQLite";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
     }
 }
