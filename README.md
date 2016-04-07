@@ -3,17 +3,18 @@ Android library to simplify the use of SQLite
 
 ## How to include
 Download the library from **Download** folder and add to your project.
-Current version is **easysqlite-0.1.1.aar**
+Current version is **easysqlite-0.1.2.aar**
 
 ## Usage
 Create you EasySQLiteTable from builder pattern
 ```Java
 public static final EasySQLiteTable TABLE_PLAYER =
-            new EasySQLiteTable().buildTableName("player")
-            .buildAddColumn(new EasySQLiteColumn().name("id").type(ColumnType.INTEGER).isPK(true).isAutoincremented(true).isNotNull(true))
-            .buildAddColumn(new EasySQLiteColumn().name("name").type(ColumnType.STRING).isPK(false).isNotNull(true))
-            .buildAddColumn(new EasySQLiteColumn().name("team").type(ColumnType.TEXT))
-            .buildAddColumn(new EasySQLiteColumn().name("moneyValue").type(ColumnType.DOUBLE));
+            new EasySQLiteTable.Builder().tableName("player")
+            .addColumn(new EasySQLiteColumn.Builder().name("id").type(ColumnType.INTEGER).isPK(true).isAutoincrement(true).isNotNull(true).create())
+            .addColumn(new EasySQLiteColumn.Builder().name("name").type(ColumnType.STRING).isPK(false).isNotNull(true).create())
+            .addColumn(new EasySQLiteColumn.Builder().name("team").type(ColumnType.TEXT).create())
+            .addColumn(new EasySQLiteColumn.Builder().name("moneyValue").type(ColumnType.DOUBLE).create())
+            .create();
 ```
 
 Create an util class to manage your database info

@@ -11,12 +11,12 @@ public class EasySQLiteColumn {
     private String type;
     private boolean isPK;
     private boolean isNotNull;
-    private boolean isAutoincremented;
+    private boolean isAutoincrement;
 
     public EasySQLiteColumn() {
         isPK = false;
         isNotNull = false;
-        isAutoincremented = false;
+        isAutoincrement = false;
     }
 
     public String getName() {
@@ -32,7 +32,8 @@ public class EasySQLiteColumn {
     }
 
     public void setType(ColumnType type) {
-        switch (type)
+        this.type = type.toString();
+        /*switch (type)
         {
             case BIGINT:    this.type = "BIGINT";   break;
             case BLOB:      this.type = "BLOB";     break;
@@ -51,7 +52,7 @@ public class EasySQLiteColumn {
             case TEXT:      this.type = "TEXT";     break;
             case TIME:      this.type = "TIME";     break;
             case VARCHAR:   this.type = "VARCHAR";  break;
-        }
+        }*/
     }
 
     public boolean isPK() {
@@ -70,52 +71,56 @@ public class EasySQLiteColumn {
         this.isNotNull = isNotNull;
     }
 
-    public boolean isAutoincremented() {
-        return isAutoincremented;
+    public boolean isAutoincrement() {
+        return isAutoincrement;
     }
 
-    public void setIsAutoincremented(boolean isAutoincremented) {
-        this.isAutoincremented = isAutoincremented;
+    public void setIsAutoincrement(boolean isAutoincrement) {
+        this.isAutoincrement = isAutoincrement;
     }
 
-    public EasySQLiteColumn name(String name) {
-        this.name = name;return this;
-    }
+    public static class Builder {
+        private String name;
+        private ColumnType type;
+        private boolean isPK;
+        private boolean isNotNull;
+        private boolean isAutoincrement;
 
-    public EasySQLiteColumn isPK(boolean isPK){
-        this.isPK = isPK;return this;
-    }
-
-    public EasySQLiteColumn isNotNull(boolean isNotNull){
-        this.isNotNull = isNotNull;return this;
-    }
-
-    public EasySQLiteColumn isAutoincremented(boolean isAutoincremented){
-        this.isAutoincremented = isAutoincremented;return this;
-    }
-
-    public EasySQLiteColumn type(ColumnType type)
-    {
-        switch (type)
-        {
-            case BIGINT:    this.type = "BIGINT";   break;
-            case BLOB:      this.type = "BLOB";     break;
-            case BOOLEAN:   this.type = "BOOLEAN";  break;
-            case CHAR:      this.type = "CHAR";     break;
-            case DATE:      this.type = "DATE";     break;
-            case DATETIME:  this.type = "DATETIME"; break;
-            case DECIMAL:   this.type = "DECIMAL";  break;
-            case DOUBLE:    this.type = "DOUBLE";   break;
-            case INTEGER:   this.type = "INTEGER";  break;
-            case INT:       this.type = "INT";      break;
-            case NONE:      this.type = "NONE";     break;
-            case NUMERIC:   this.type = "NUMERIC";  break;
-            case REAL:      this.type = "REAL";     break;
-            case STRING:    this.type = "STRING";   break;
-            case TEXT:      this.type = "TEXT";     break;
-            case TIME:      this.type = "TIME";     break;
-            case VARCHAR:   this.type = "VARCHAR";  break;
+        public Builder() {
+            isPK = false;
+            isNotNull = false;
+            isAutoincrement = false;
         }
-        return this;
+
+        public Builder name(String name) {
+            this.name = name;return this;
+        }
+
+        public Builder isPK(boolean isPK){
+            this.isPK = isPK;return this;
+        }
+
+        public Builder isNotNull(boolean isNotNull){
+            this.isNotNull = isNotNull;return this;
+        }
+
+        public Builder isAutoincrement(boolean isAutoincrement){
+            this.isAutoincrement = isAutoincrement;return this;
+        }
+
+        public Builder type(ColumnType type) {
+            this.type = type;return this;
+        }
+
+        public EasySQLiteColumn create()
+        {
+            EasySQLiteColumn column = new EasySQLiteColumn();
+            column.setName(this.name);
+            column.setType(this.type);
+            column.setIsPK(this.isPK);
+            column.setIsNotNull(this.isNotNull);
+            column.setIsAutoincrement(this.isAutoincrement);
+            return column;
+        }
     }
 }

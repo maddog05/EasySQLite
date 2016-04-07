@@ -15,45 +15,27 @@ public class EasySQLiteTable {
     private String tableName;
     private List<EasySQLiteColumn> columns;
 
-    public EasySQLiteTable()
-    {
+    public EasySQLiteTable() {
         columns = new ArrayList<>();
     }
 
-    public void setTableName(String tableName)
-    {
+    public void setTableName(String tableName) {
         this.tableName = tableName;
     }
 
-    public String getTableName()
-    {
+    public String getTableName() {
         return tableName;
     }
 
-    public void setColumns(List<EasySQLiteColumn> columns)
-    {
+    public void setColumns(List<EasySQLiteColumn> columns) {
         this.columns = columns;
     }
 
-    public List<EasySQLiteColumn> getColumns()
-    {
+    public List<EasySQLiteColumn> getColumns() {
         return columns;
     }
 
-    public EasySQLiteTable buildTableName(String tableName)
-    {
-        this.tableName = tableName;
-        return this;
-    }
-
-    public EasySQLiteTable buildAddColumn(EasySQLiteColumn column)
-    {
-        this.columns.add(column);
-        return this;
-    }
-
-    public EasySQLiteCreationScript buildCreationScript()
-    {
+    public EasySQLiteCreationScript buildCreationScript() {
         EasySQLiteCreationScript script = new EasySQLiteCreationScript();
 
         if(tableName == null || tableName.isEmpty())
@@ -84,7 +66,7 @@ public class EasySQLiteTable {
                 query += " " + "PRIMARY KEY";
             }
             //IS AUTOINCREMENTED
-            if(column.isAutoincremented())
+            if(column.isAutoincrement())
             {
                 query += " " + "AUTOINCREMENT";
             }
@@ -102,8 +84,7 @@ public class EasySQLiteTable {
         return script;
     }
 
-    public List<String> getColumnNames()
-    {
+    public List<String> getColumnNames() {
         List<String> names = new ArrayList<>();
         if(columns == null || columns.size() == 0)
         {
@@ -128,5 +109,34 @@ public class EasySQLiteTable {
                 pkColumns.add(columns.get(i));
         }
         return pkColumns;
+    }
+
+    public static class Builder {
+        private String tableName;
+        private List<EasySQLiteColumn> columns;
+
+        public Builder()
+        {
+            columns = new ArrayList<>();
+        }
+
+        public Builder tableName(String tableName)
+        {
+            this.tableName = tableName;
+            return this;
+        }
+
+        public Builder addColumn(EasySQLiteColumn column)
+        {
+            this.columns.add(column);
+            return this;
+        }
+
+        public EasySQLiteTable create(){
+            EasySQLiteTable table = new EasySQLiteTable();
+            table.setTableName(this.tableName);
+            table.setColumns(this.columns);
+            return table;
+        }
     }
 }

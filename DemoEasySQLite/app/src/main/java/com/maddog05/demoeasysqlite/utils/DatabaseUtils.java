@@ -6,7 +6,7 @@ import com.maddog05.easysqlite.entities.EasySQLiteTable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+/*
  * Created by maddog05 on 17/03/16.
  */
 public class DatabaseUtils {

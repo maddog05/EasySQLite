@@ -4,7 +4,7 @@ import com.maddog05.easysqlite.entities.EasySQLiteColumn;
 import com.maddog05.easysqlite.entities.EasySQLiteTable;
 import com.maddog05.easysqlite.enums.ColumnType;
 
-/**
+/*
  * Created by maddog05 on 17/03/16.
  */
 public class Player {
@@ -46,9 +46,10 @@ public class Player {
     }
 
     public static final EasySQLiteTable TABLE =
-            new EasySQLiteTable().buildTableName("player")
-            .buildAddColumn(new EasySQLiteColumn().name("id").type(ColumnType.INTEGER).isPK(true).isAutoincremented(true).isNotNull(true))
-            .buildAddColumn(new EasySQLiteColumn().name("name").type(ColumnType.STRING).isPK(false).isNotNull(true))
-            .buildAddColumn(new EasySQLiteColumn().name("team").type(ColumnType.TEXT))
-            .buildAddColumn(new EasySQLiteColumn().name("moneyValue").type(ColumnType.DOUBLE));
+            new EasySQLiteTable.Builder().tableName("player")
+            .addColumn(new EasySQLiteColumn.Builder().name("id").type(ColumnType.INTEGER).isPK(true).isAutoincrement(true).isNotNull(true).create())
+            .addColumn(new EasySQLiteColumn.Builder().name("name").type(ColumnType.STRING).isPK(false).isNotNull(true).create())
+            .addColumn(new EasySQLiteColumn.Builder().name("team").type(ColumnType.TEXT).create())
+            .addColumn(new EasySQLiteColumn.Builder().name("moneyValue").type(ColumnType.DOUBLE).create())
+            .create();
 }

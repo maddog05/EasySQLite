@@ -20,5 +20,5 @@ public enum ColumnType {
     STRING,
     TEXT,
     TIME,
-    VARCHAR;
+    VARCHAR
 }
