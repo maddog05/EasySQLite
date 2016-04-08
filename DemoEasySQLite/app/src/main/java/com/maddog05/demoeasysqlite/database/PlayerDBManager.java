@@ -23,36 +23,44 @@ public class PlayerDBManager extends EasySQLiteHandler {
         super(ctx, DatabaseUtils.DATABASE_NAME, DatabaseUtils.DATABASE_VERSION, DatabaseUtils.getTables());
     }
 
-    public void open()
-    {
+    public void open() {
         if(db == null)
             db = this.getWritableDatabase();
     }
 
-    public void close()
-    {
+    public void close() {
         if (db != null) db.close();
     }
 
-    public void insertPlayer(Player player)
-    {
+    public void insertPlayer(Player player) {
+        open();
         ContentValues values = new ContentValues();
-        List<String> colummnNames = Player.TABLE.getColumnNames();
-        values.put(colummnNames.get(1),player.getName());
-        values.put(colummnNames.get(2),player.getTeam());
-        values.put(colummnNames.get(3), player.getMoneyValue());
-        //db.insert(Player.TABLE.getTableName(), null, values);
+        List<String> columnNames = Player.TABLE.getColumnNames();
+        values.put(columnNames.get(1),player.getName());
+        values.put(columnNames.get(2),player.getTeam());
+        values.put(columnNames.get(3), player.getMoneyValue());
+        super.insertEntity(db, Player.TABLE.getTableName(), values);
+        close();
+    }
+
+    public void insertPlayers(List<Player> players) {
+        open();
+        for(int i = 0; i < players.size(); i++)
+            insertPlayerWithoutDBManagement(players.get(i));
+        close();
+    }
+
+    private void insertPlayerWithoutDBManagement(Player player) {
+        ContentValues values = new ContentValues();
+        List<String> columnNames = Player.TABLE.getColumnNames();
+        values.put(columnNames.get(1),player.getName());
+        values.put(columnNames.get(2),player.getTeam());
+        values.put(columnNames.get(3), player.getMoneyValue());
         super.insertEntity(db, Player.TABLE.getTableName(), values);
     }
 
-    public void insertPlayers(List<Player> players)
-    {
-        for(int i = 0; i < players.size(); i++)
-            insertPlayer(players.get(i));
-    }
-
-    public List<Player> getPlayers()
-    {
+    public List<Player> getPlayers() {
+        open();
         List<Player> players = new ArrayList<>();
         //String query = "SELECT * FROM " + Player.TABLE.getTableName();
         //Cursor cursor = db.rawQuery(query, null);
@@ -63,49 +71,55 @@ public class PlayerDBManager extends EasySQLiteHandler {
                 players.add(getPlayerFromCursor(cursor));
             }while (cursor.moveToNext());
         }
+        close();
         return players;
     }
 
-    public Player getPlayer(int id)
-    {
+    public Player getPlayer(int id) {
+        open();
         String query = "SELECT * FROM " + Player.TABLE.getTableName();
         Cursor cursor = db.rawQuery(query, null);
         if(cursor.moveToFirst())
         {
             do{
                 Player player = getPlayerFromCursor(cursor);
-                if(player.getId() == id)
+                if(player.getId() == id){
+                    close();
                     return player;
+                }
             }while (cursor.moveToNext());
         }
+        close();
         return null;
     }
 
-    public void deletePlayers()
-    {
-        //db.delete(Player.TABLE.getTableName(), null, null);
+    public void deletePlayers() {
+        open();
         super.deleteEntities(db, Player.TABLE.getTableName());
+        close();
     }
 
-    public void deletePlayer(Player player)
-    {
+    public void deletePlayer(Player player) {
+        open();
         String KEY_ID = Player.TABLE.getColumnNames().get(0);
         db.delete(Player.TABLE.getTableName(), KEY_ID + " = ?", new String[]{String.valueOf(player.getId())});
+        close();
     }
 
-    public int updatePlayer(Player player)
-    {
+    public int updatePlayer(Player player) {
+        open();
         ContentValues values = new ContentValues();
         List<String> colummnNames = Player.TABLE.getColumnNames();
         values.put(colummnNames.get(1),player.getName());
         values.put(colummnNames.get(2),player.getTeam());
         values.put(colummnNames.get(3),player.getMoneyValue());
 
-        return db.update(Player.TABLE.getTableName(),values, colummnNames.get(0) + " = ?", new String[]{String.valueOf(player.getId())});
+        int result = db.update(Player.TABLE.getTableName(),values, colummnNames.get(0) + " = ?", new String[]{String.valueOf(player.getId())});
+        close();
+        return result;
     }
 
-    private Player getPlayerFromCursor(Cursor cursor)
-    {
+    private Player getPlayerFromCursor(Cursor cursor) {
         Player player = new Player();
         player.setId(cursor.getInt(0));
         player.setName(cursor.getString(1));

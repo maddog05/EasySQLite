@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         playerManager = new PlayerDBManager(MainActivity.this);
-        playerManager.open();
+        //playerManager.open();
         recyclerPlayers = (RecyclerView) findViewById(R.id.recyclerPlayers);
         LinearLayoutManager llm = new LinearLayoutManager(MainActivity.this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
