@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.maddog05.easysqlite.entities.EasySQLiteCreationScript;
+import com.maddog05.easysqlite.entities.EasySQLiteEntity;
 import com.maddog05.easysqlite.entities.EasySQLiteTable;
+import com.maddog05.easysqlite.interfaces.EasySQLiteInterface;
 import com.maddog05.easysqlite.messages.EasySQLiteMessage;
 
 import java.util.List;
@@ -52,6 +54,10 @@ public class EasySQLiteHandler extends SQLiteOpenHelper {
     public void insertEntity(SQLiteDatabase db, String table, ContentValues values)
     {
         db.insert(table, null, values);
+    }
+
+    public void insertEntityTwo(SQLiteDatabase db, String table, EasySQLiteInterface entity) {
+        db.insert(table, null, entity.toContentValues());
     }
 
     public Cursor listEntities(SQLiteDatabase db, String table)

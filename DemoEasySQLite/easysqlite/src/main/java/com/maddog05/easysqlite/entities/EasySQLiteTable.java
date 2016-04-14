@@ -98,8 +98,7 @@ public class EasySQLiteTable {
         return names;
     }
 
-    public List<EasySQLiteColumn> getPKColumns()
-    {
+    public List<EasySQLiteColumn> getPKColumns() {
         List<EasySQLiteColumn> pkColumns = new ArrayList<>();
         if(columns == null || columns.size() == 0)
             return pkColumns;
@@ -109,6 +108,19 @@ public class EasySQLiteTable {
                 pkColumns.add(columns.get(i));
         }
         return pkColumns;
+    }
+
+    public String[] getKeysAsStringArray() {
+        if (columns.size() == 0) {
+            Log.e(LOG_TAG, EasySQLiteMessage.TABLE_COLUMNS_EMPTY_OR_NULL);
+            return new String[0];
+        }
+        int countColumns = columns.size();
+        String[] response = new String[countColumns];
+        for(int i = 0; i < countColumns; i++) {
+            response[i] = columns.get(i).getName();
+        }
+        return response;
     }
 
     public static class Builder {
