@@ -10,8 +10,8 @@ import android.util.Log;
 import com.maddog05.easysqlite.entities.EasySQLiteCreationScript;
 import com.maddog05.easysqlite.entities.EasySQLiteEntity;
 import com.maddog05.easysqlite.entities.EasySQLiteTable;
-import com.maddog05.easysqlite.interfaces.EasySQLiteInterface;
 import com.maddog05.easysqlite.messages.EasySQLiteMessage;
+import com.maddog05.easysqlite.utils.Converter;
 
 import java.util.List;
 
@@ -22,9 +22,9 @@ public class EasySQLiteHandler extends SQLiteOpenHelper {
 
     private static final String LOG_TAG = "EasySQLiteHandler";
 
-    private List<EasySQLiteTable> tables;
+    private List<Class<?>> tables;
 
-    public EasySQLiteHandler(Context ctx, String databaseName, int databaseVersion, List<EasySQLiteTable> tables)
+    public EasySQLiteHandler(Context ctx, String databaseName, int databaseVersion, List<Class<?>> tables)
     {
         super(ctx, databaseName, null, databaseVersion);
         this.tables = tables;
@@ -34,7 +34,7 @@ public class EasySQLiteHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         for(int i = 0; i < tables.size(); i++)
         {
-            EasySQLiteCreationScript script = tables.get(i).buildCreationScript();
+            EasySQLiteCreationScript script = Converter.getCreateTableBuilder((Class<? extends EasySQLiteEntity>) tables.get(i));
             if(script.getMessage().equals(EasySQLiteMessage.TABLE_SCRIPT_GENERATED))
                 db.execSQL(script.getScript());
             else
@@ -46,7 +46,7 @@ public class EasySQLiteHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         for(int i = 0; i < tables.size(); i++)
         {
-            db.execSQL("DROP TABLE IF EXIST " + tables.get(i).getTableName());
+            db.execSQL("DROP TABLE IF EXIST " + Converter.getTableName((Class<? extends EasySQLiteEntity>) tables.get(i)));
         }
         onCreate(db);
     }
@@ -56,7 +56,7 @@ public class EasySQLiteHandler extends SQLiteOpenHelper {
         db.insert(table, null, values);
     }
 
-    public void insertEntityTwo(SQLiteDatabase db, String table, EasySQLiteInterface entity) {
+    public void insertEntityTwo(SQLiteDatabase db, String table, EasySQLiteEntity entity) {
         db.insert(table, null, entity.toContentValues());
     }
 

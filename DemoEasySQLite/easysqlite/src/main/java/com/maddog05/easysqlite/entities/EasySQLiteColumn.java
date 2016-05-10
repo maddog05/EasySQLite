@@ -9,6 +9,7 @@ public class EasySQLiteColumn {
 
     private String name;
     private String type;
+    private ColumnType columnType;
     private boolean isPK;
     private boolean isNotNull;
     private boolean isAutoincrement;
@@ -32,6 +33,7 @@ public class EasySQLiteColumn {
     }
 
     public void setType(ColumnType type) {
+        this.columnType = type;
         this.type = type.toString();
         /*switch (type)
         {
@@ -54,6 +56,8 @@ public class EasySQLiteColumn {
             case VARCHAR:   this.type = "VARCHAR";  break;
         }*/
     }
+
+    public ColumnType getColumnType() {return columnType;}
 
     public boolean isPK() {
         return isPK;
