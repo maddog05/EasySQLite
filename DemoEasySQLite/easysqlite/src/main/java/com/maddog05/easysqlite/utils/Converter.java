@@ -1,6 +1,7 @@
 package com.maddog05.easysqlite.utils;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 
 import com.maddog05.easysqlite.annotations.EasySQLiteAnnotationColumn;
 import com.maddog05.easysqlite.annotations.EasySQLiteAnnotationTable;
@@ -68,6 +69,51 @@ public class Converter {
             iaE.printStackTrace();
             return null;
         }
+    }
+
+    //USANDO
+
+    private static EasySQLiteAnnotationColumn getAnnotation(Class <? extends EasySQLiteEntity> classTable, Field field) {
+        return null;
+    }
+
+    /*private static int getColumnIndex(Class <? extends EasySQLiteEntity> classTable, Cursor cursor, String columnName) {
+        Field[] fields = classTable.getDeclaredFields();
+        for (int i = 0; i < fields.length; i++) {
+            fields[i].setAccessible(true);cursor.
+            Field field = fields[i];
+            EasySQLiteAnnotationColumn annotationColumn = getAnnotation(classTable, field);
+            if(annotationColumn != null) {
+                return i;
+            }
+        }
+        return -1;
+    }*/
+
+    public static EasySQLiteEntity convertCursorToEntity(Cursor cursor, Class <? extends EasySQLiteEntity> classTable) {
+        EasySQLiteEntity entity = null;
+        try{
+            entity = classTable.newInstance();
+            Field[] fields = classTable.getFields();
+
+            for (Field field : fields) {
+                field.setAccessible(true);
+                EasySQLiteAnnotationColumn annotationColumn = field.getAnnotation(EasySQLiteAnnotationColumn.class);
+                if (annotationColumn != null) {
+                    String columnName = annotationColumn.columnName();
+                    //int columnIndex = getColumnIndex(classTable, cursor, columnName);
+                    int columnIndex = cursor.getColumnIndex(columnName);
+                    if (columnIndex != -1) {
+                        field.set(entity, CursorUtils.verifyValue(cursor, columnIndex, classTable));
+                    }
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            entity = null;
+        }
+        return entity;
     }
 
     public static ContentValues convertEntityToContentValues(EasySQLiteEntity entity, boolean isInsert) {

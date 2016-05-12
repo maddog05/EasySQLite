@@ -59,25 +59,31 @@ public class EasySQLite {
     public void insertEntity(EasySQLiteTable table, EasySQLiteEntity entity) {
         openWrite();
         ContentValues values = Converter.fromEntityToCVInsert(table, entity);
-        database.insert(table.getTableName(), null, values);
+        if(values != null)
+            database.insert(table.getTableName(), null, values);
         close();
     }
 
     public void insertEntities(EasySQLiteTable table, List<EasySQLiteEntity> entities) {
         openWrite();
-        for(int i = 0; i < entities.size(); i++)
+        database.beginTransaction();
+        for(int i = 0; i < entities.size(); i++) {
             database.insert(table.getTableName(), null, entities.get(i).toContentValues());
+            database.yieldIfContendedSafely();
+        }
+        database.endTransaction();
         close();
     }
 
-    public List<EasySQLiteEntity> getEntities(EasySQLiteTable table) {
+    public List<EasySQLiteEntity> getEntities(Class <? extends EasySQLiteEntity> classTable) {
         List<EasySQLiteEntity> entities = new ArrayList<>();
         openRead();
-        String query = "SELECT * FROM " + table.getTableName();
+        String tableName = Converter.getTableName(classTable);
+        String query = "SELECT * FROM " +tableName;
         Cursor cursor = database.rawQuery(query, null);
         if(cursor != null && cursor.moveToFirst()) {
             do {
-
+                entities.add(Converter.convertCursorToEntity(cursor, classTable));
             }while (cursor.moveToNext());
             cursor.close();
         }
@@ -85,6 +91,14 @@ public class EasySQLite {
         return entities;
     }
 
+    public void deleteEntities(Class <? extends EasySQLiteEntity> classTable) {
+        openWrite();
+        String tableName = Converter.getTableName(classTable);
+        database.delete(tableName, null, null);
+        close();
+    }
+
+    //FALTA
     public void updateEntity(EasySQLiteTable table, EasySQLiteEntity entity) {
         openWrite();
         database.update(table.getTableName(), entity.toContentValues(), "KEY = ?", new String[]{"ALA"});
@@ -97,13 +111,9 @@ public class EasySQLite {
         close();
     }
 
-    public void deleteEntities(EasySQLiteTable table) {
-        openWrite();
-        database.delete(table.getTableName(), null, null);
-        close();
-    }
+    //FALTA GET ENTIDAD
 
-    //NEW
+    //OBSOLETO
     public EasySQLiteTransaction withTable(Class <? extends EasySQLiteEntity> classTable) {
         return new EasySQLiteTransaction(ctx, database, classTable);
     }

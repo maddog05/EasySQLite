@@ -25,7 +25,6 @@ public class EasySQLiteClassManager {
         if(mSharedInstance == null) {
             mSharedInstance = new EasySQLiteClassManager();
         }
-
         return mSharedInstance;
     }
 
