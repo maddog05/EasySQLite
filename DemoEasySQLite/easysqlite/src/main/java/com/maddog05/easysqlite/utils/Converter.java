@@ -14,6 +14,7 @@ import com.maddog05.easysqlite.messages.EasySQLiteMessage;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -141,6 +142,86 @@ public class Converter {
             }
         }catch (IllegalAccessException iaE){iaE.printStackTrace();}
         return values;
+    }
+
+    public static String getWhereSearch(EasySQLiteEntity entity) {
+        List<String> stringsWithKeys = new ArrayList<>();
+        String response = "WHERE ";
+        try {
+            Field[] fields = entity.getClass().getFields();
+            for (int i = 0; i < fields.length; i++) {
+                fields[i].setAccessible(true);
+                Field field = fields[i];
+                Object objValue = field.get(entity);
+                Annotation annotation = field.getAnnotation(EasySQLiteAnnotationColumn.class);
+                if (annotation != null) {
+                    EasySQLiteAnnotationColumn esqliteColumn = (EasySQLiteAnnotationColumn) annotation;
+                    if (esqliteColumn.isPrimaryKey()) {
+                        if (objValue instanceof String)
+                            stringsWithKeys.add(esqliteColumn.columnName() + " = " + "'" + objValue + "'");
+                        else
+                            stringsWithKeys.add(esqliteColumn.columnName() + " = " + String.valueOf(objValue));
+                    }
+                }
+            }
+            if (stringsWithKeys.size() == 1) {
+                response += stringsWithKeys.get(0);
+            } else {
+                for (int i = 0; i < stringsWithKeys.size(); i++) {
+                    response += stringsWithKeys.get(i);
+                    response += (i < stringsWithKeys.size() - 1 ? " AND " : "");
+                }
+            }
+            return response;
+        } catch (IllegalAccessException iaE) {
+            iaE.printStackTrace();
+            return response;
+        }
+    }
+
+    public static String[] getPKValuesAsStringArray(EasySQLiteEntity entity) {
+        List<String> strings = new ArrayList<>();
+        try {
+            Field[] fields = entity.getClass().getFields();
+            for(int i = 0; i < fields.length; i++) {
+                fields[i].setAccessible(true);
+                Field field = fields[i];
+                Object objValue = field.get(entity);
+                Annotation annotation = field.getAnnotation(EasySQLiteAnnotationColumn.class);
+                if (annotation != null) {
+                    EasySQLiteAnnotationColumn esqliteColumn = (EasySQLiteAnnotationColumn) annotation;
+                    if(esqliteColumn.isPrimaryKey()) {
+                        if(objValue instanceof String)
+                            strings.add("'" + objValue + "'");
+                        else
+                            strings.add(String.valueOf(objValue));
+                    }
+                }
+            }
+            String[] response = new String[strings.size()];
+            for(int i = 0; i < strings.size(); i++)
+                response[i] = strings.get(i);
+            return response;
+        }catch (IllegalAccessException iaE){iaE.printStackTrace();
+        return new String[0];
+        }
+    }
+
+    public static String getPKColumnsAsString(Class <? extends EasySQLiteEntity> classTable) {
+        String response = "";
+        Field[] fields = classTable.getDeclaredFields();
+        for(int i = 0; i < fields.length; i++) {
+            fields[i].setAccessible(true);
+            Field field = fields[i];
+            Annotation annotation = field.getAnnotation(EasySQLiteAnnotationColumn.class);
+            if(annotation != null) {
+                EasySQLiteAnnotationColumn column = (EasySQLiteAnnotationColumn) annotation;
+                if(column.isPrimaryKey()) {
+                    response += (column.columnName() + " = ?");
+                }
+            }
+        }
+        return response;
     }
 
     public static String getTableName(Class <? extends EasySQLiteEntity> classTable) {

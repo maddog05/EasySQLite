@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.maddog05.demoeasysqlite.adapters.PlayerAdapter;
 import com.maddog05.demoeasysqlite.database.PlayerDBManager;
 import com.maddog05.demoeasysqlite.entities.Player;
+import com.maddog05.easysqlite.EasySQLite;
 
 import java.util.List;
 
@@ -65,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
                     player.setName(pName);
                     player.setTeam(pTeam);
                     player.setMoneyValue(Double.parseDouble(pValue));
-                    playerManager.insertPlayer(player);
+                    //playerManager.insertPlayer(player);
+                    EasySQLite.getInstance().insertEntity(Player.class, player);
                     Snackbar.make(v, "Player inserted", Snackbar.LENGTH_SHORT).show();
                     dialog.dismiss();
 
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getPlayers(View v)
     {
-        List<Player> players = playerManager.getPlayers();
+        List<Player> players = EasySQLite.getInstance().getEntities(Player.class); //playerManager.getPlayers();
         if(players == null || players.size() == 0)
             Snackbar.make(v,"Players is empty",Snackbar.LENGTH_SHORT).show();
         else
@@ -106,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
         dialogDelete.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                playerManager.deletePlayers();
+                //playerManager.deletePlayers();
+                EasySQLite.getInstance().deleteEntities(Player.class);
                 recyclerPlayers.setAdapter(new PlayerAdapter(MainActivity.this, null));
                 Snackbar.make(recyclerPlayers, "Players deleted", Snackbar.LENGTH_SHORT).show();
             }
